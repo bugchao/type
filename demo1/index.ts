@@ -552,3 +552,174 @@ db.add(a);
 //     delete():boolean;
 //     get():any[];
 // }
+
+//装饰器
+
+// 通俗的讲装饰器是一个方法，可以注入到类、方法、属性参数来扩展类，属性、方法、参数的功能
+// 常见装饰器有： 类装饰器、属性装饰器、方法装饰器、参数装饰器
+// 装饰器的写法： 普通装饰（无法传参） 装饰器工厂（可传参）
+// 装饰器是过去几年中js最大成就之一，已经是ES7标准特性之一
+
+// 类装饰器： 类装饰器在类声明之前被声明（紧靠类声明）类装饰器应用于构造函数，可以用来监视，修改或替换类定义，传入一个参数
+/**
+ * 
+ 
+
+function logClass(params:any) {
+    console.log(params);
+    params.prototype.name='xiaobai';
+    params.prototype.getName = function() {
+        return this.name;
+    }
+}
+
+@logClass
+class HttpClient {
+    constructor() {
+
+    }
+    getData() {
+
+    }
+}
+
+var http:any = new HttpClient();
+console.log(http.name);
+console.log(http.getName());
+
+ */
+ 
+
+/**
+ 
+ // 装饰器工厂
+function decorateHttp(params:any) {
+    return function (target:any) {
+        console.log(params, '传参数');
+        console.log(target);
+        target.prototype.name= 'xiaobai';
+    }
+}
+
+@decorateHttp('小白')
+class HttpClient1 {
+    constructor() {
+
+    }
+    getData() {
+
+    }
+}
+ */
+
+
+ // 类装饰器
+// 下面是一个重载构造函数的例子
+// 类装饰器表达式会在运行时当作函数被调用，类的构造函数作为其唯一的参数
+// 如果类装饰返回一个值，他会使用提供的构造函数来替换类的声明
+
+
+/**
+ * 
+ * @param target 
+function deClass(target:any) {
+    console.log(target);
+    return class extends target {
+        name:any='小黑'
+        getName() {
+            console.log(this.name);
+        }
+    }
+}
+
+@deClass
+class HttpClient {
+    public name:string|undefined
+    constructor(name:string) {
+        console.log(`源contrucotr ${name}`)
+    }
+    getName() {
+        console.log(this.name);
+    }
+}
+
+const h = new HttpClient('小牛');
+ 
+ */
+
+
+
+/**
+ * 属性装饰器
+ * 属性装饰器表达式会在运行时当作函数被调用，传入下列两个参数：
+ *  对于静态成语说是类型的构造函数，对于实例成员是类的原形对象
+ *  成员的名字
+ */
+
+
+
+/**
+ const deAttr = function(target:any, name: string) {
+     console.log(target,name );
+     target[name] = 123
+    }
+    
+    class Member {
+        @deAttr 
+        public name:string | undefined;
+        constructor(){
+            console.log(this.name);
+        }
+    }
+    var m = new Member();
+    
+ */
+
+
+// 方法装饰器
+
+/**
+ * 
+ const getMethod = function(target: any, methodName:string, param:any) { 
+    console.log(target);
+    target.apiUrl = 'baidu.com'
+    target.getUrl = function() {
+        return this.apiUrl;
+    }
+    const oMethod = param.value;
+    param.value = function(name:any) {
+        console.log("扩展方法");
+        oMethod.call(this, name)
+    }
+}
+
+class MethodClass {
+    constructor(){
+        
+    }
+    @getMethod
+    getData() {
+        console.log('我是原生的方法')
+    }
+}
+
+var method = new MethodClass();
+
+method.getData();
+ */
+
+
+const getAttr = function(target:any, methodName:string, paramsIndex:number) {
+    console.log(target, methodName, paramsIndex);
+}
+
+
+class AttributeClass {
+    getData(@getAttr name:any) {
+        console.log(name)
+    }
+}
+
+var attr = new AttributeClass();
+attr.getData('小白');
+
